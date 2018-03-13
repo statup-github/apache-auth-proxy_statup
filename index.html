@@ -1,0 +1,37 @@
+<html>
+	<head>
+		<title>Login required</title>
+		<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="/auth/css/style.css" />
+		<script type="text/javascript">
+			function init() {
+				if (localStorage.getItem("tryLogin")) {
+					document.getElementById("error").className += "show";
+					localStorage.removeItem("tryLogin");
+				}
+				/* document.getElementById("password").focus(); */
+			}
+			
+			function tryLogin() {
+				localStorage.setItem("tryLogin", true);	
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<div id="logo"></div>
+		<div id="content">
+			<h1>Login</h1>
+			<form method="POST" action="" onsubmit="tryLogin()">
+				<label for="username">Username</label><input type="text" id="httpd_username" name="httpd_username" value="" />
+				<label for="password">Password</label><input type="password" id="httpd_password" name="httpd_password" value="" />
+				<input type="submit" name="login" value="Login" />
+			</form>
+
+			<p id="error">Login failed!</p>
+		</div>
+		<div id="footer">
+			<span>&copy; 2017 STAT-UP.    </span>
+			<a href="https://stat-up.com/impressum/">Impressum</a>
+		</div>
+	</body>
+</html>
