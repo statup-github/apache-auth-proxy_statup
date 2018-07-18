@@ -1,6 +1,7 @@
 body {
 	background : #ffffff;
-	background-image: url(https://stat-up.com/wp-content/uploads/2017/02/newyork-in-digits-small-1.jpg);
+    background-image: url(https://stat-up.com/wp-content/uploads/2017/02/newyork-in-digits-small-1.jpg);
+    background-size: cover;
 	color : #A5AEAE;
 	font-family : "Roboto Condensed";
 	padding : 0;

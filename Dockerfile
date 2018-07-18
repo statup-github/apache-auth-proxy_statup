@@ -2,7 +2,6 @@ FROM httpd:2.4
 LABEL maintainer="Stefan Fritsch <stefan.fritsch@stat-up.com>"
 
 EXPOSE 80
-CMD ["httpd-foreground"]
 
 RUN apt-get update && apt-get install nano && apt-get clean
 
@@ -30,9 +29,10 @@ COPY STAT-UP-Transparent-300.png /usr/local/apache2/htdocs/auth/css/STAT-UP-Tran
 # RUN cat /usr/local/apache2/conf/httpd.conf.addendum >> /usr/local/apache2/conf/httpd.conf
 
 COPY httpd.conf /usr/local/apache2/conf/httpd.conf
+COPY apache.sh /usr/local/apache2/bin
+RUN chown root:root /usr/local/apache2/bin/apache.sh \
+    && chmod 0500 /usr/local/apache2/bin/apache.sh
+
+CMD /usr/local/apache2/bin/apache.sh
 
 RUN mkdir /auth 
-
-RUN cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 > /usr/local/apache2/conf/cryptopassphrase
-RUN chmod 0400 /usr/local/apache2/conf/cryptopassphrase \
-    && sed -ri "s/replacemewithpassphrase/$(cat /usr/local/apache2/conf/cryptopassphrase)/g" /usr/local/apache2/conf/httpd.conf
