@@ -1,5 +1,5 @@
 FROM httpd:2.4
-MAINTAINER Stefan Fritsch <stefan.fritsch@stat-up.com>
+LABEL maintainer="Stefan Fritsch <stefan.fritsch@stat-up.com>"
 
 EXPOSE 80
 CMD ["httpd-foreground"]
@@ -31,4 +31,8 @@ COPY STAT-UP-Transparent-300.png /usr/local/apache2/htdocs/auth/css/STAT-UP-Tran
 
 COPY httpd.conf /usr/local/apache2/conf/httpd.conf
 
-RUN mkdir /auth
+RUN mkdir /auth 
+
+RUN cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 > /usr/local/apache2/conf/cryptopassphrase
+RUN chmod 0400 /usr/local/apache2/conf/cryptopassphrase \
+    && sed -ri -e "s/replacemewithpassphrase/$(cat /usr/local/apache2/conf/cryptopassphrase)/" /usr/local/apache2/conf/httpd.conf
