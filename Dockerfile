@@ -1,38 +1,25 @@
-FROM httpd:2.4
+FROM stefanfritsch/baseimage_statup:1.1.20200104
+LABEL org.opencontainers.image.created="2020-01-04T14:39:06Z"
 LABEL maintainer="Stefan Fritsch <stefan.fritsch@stat-up.com>"
 
 EXPOSE 80
-
-RUN apt-get update && apt-get install nano && apt-get clean
+RUN  apt-get update \
+  && apt-get install -y --no-install-recommends \
+          apache2 \
+          libapache2-mod-auth-openidc \
+          net-tools \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV UPSTREAM shiny.stat-up.com
 ENV PORT 80
 ENV BASEDIR /
+ENV ADMIN_EMAIL it@stat-up.com
 
-COPY index.html /usr/local/apache2/htdocs/auth/index.html
-COPY style.css /usr/local/apache2/htdocs/auth/css/style.css
-COPY STAT-UP-Transparent-300.png /usr/local/apache2/htdocs/auth/css/STAT-UP-Transparent-300.png
+COPY index.html /var/www/html/auth/index.html
+COPY style.css /var/www/html/auth/css/style.css
+COPY httpd.conf /etc/apache2/apache2.conf
 
-# RUN sed -ri \
-#    -e "s/^#(LoadModule.*mod_proxy.so)/\1/" \
-#    -e "s/^#(LoadModule.*mod_proxy_http.so)/\1/" \
-#    -e "s/^#(LoadModule.*mod_proxy_wstunnel.so)/\1/" \
-#    -e "s/^#(LoadModule.*mod_headers.so)/\1/" \
-#    -e "s/^#(LoadModule.*mod_rewrite.so)/\1/" \
-#    -e "s/^#(LoadModule.*mod_session.so)/\1/" \
-#    -e "s/^#(LoadModule.*mod_session_cookie.so)/\1/" \
-#    -e "s/^#(LoadModule.*mod_auth_form.so)/\1/" \
-#    -e "s/^#(LoadModule.*mod_request.so)/\1/" \
-#    /usr/local/apache2/conf/httpd.conf
-
-# COPY httpd.conf.addendum /usr/local/apache2/conf/httpd.conf.addendum
-# RUN cat /usr/local/apache2/conf/httpd.conf.addendum >> /usr/local/apache2/conf/httpd.conf
-
-COPY httpd.conf /usr/local/apache2/conf/httpd.conf
-COPY apache.sh /usr/local/apache2/bin
-RUN chown root:root /usr/local/apache2/bin/apache.sh \
-    && chmod 0500 /usr/local/apache2/bin/apache.sh
-
-CMD /usr/local/apache2/bin/apache.sh
-
-RUN mkdir /auth 
+RUN  mkdir /etc/service/apache
+COPY apache.sh /etc/service/apache/run
+RUN chmod 0500 /etc/service/apache/run
